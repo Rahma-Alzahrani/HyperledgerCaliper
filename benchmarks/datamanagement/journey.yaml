@@ -1,0 +1,164 @@
+test:
+  name: journey-schedule-benchmark
+  description: "Benchmarking the Hyperledger Fabric network with the JourneySchedule function"
+  workers:
+    number: 10
+  rounds:
+    - label: journey-schedule-1-100 bytesize
+      description: "Benchmarking the JourneySchedule function with specific parameters."
+      chaincodeID: basic
+      txDuration: 60
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 60
+      workload:
+        module: benchmarks/datamanagement/workloads/create-journey.js
+        arguments:
+          chaincodeID: basic
+          byteSize: 100
+
+    # Additional test cases
+    - label: journey-schedule-2-1000 bytesize
+      description: "Another test case for JourneySchedule function."
+      chaincodeID: basic
+      txDuration: 60
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 60
+      workload:
+        module: benchmarks/datamanagement/workloads/create-journey.js
+        arguments:
+          chaincodeID: basic
+          byteSize: 1000
+
+    - label: journey-schedule-3-2000 bytesize
+      description: "Yet another test case for JourneySchedule function."
+      chaincodeID: basic
+      txDuration: 60
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 60
+      workload:
+        module: benchmarks/datamanagement/workloads/create-journey.js
+        arguments:
+          chaincodeID: basic
+          byteSize: 2000
+
+    # - label: journey-schedule-4-4000 bytesize
+    #   description: "Additional test case for JourneySchedule function."
+    #   chaincodeID: basic
+    #   txDuration: 60
+    #   rateControl:
+    #     type: fixed-rate
+    #     opts:
+    #       tps: 2000
+    #   workload:
+    #     module: benchmarks/datamanagement/workloads/create-journey.js
+    #     arguments:
+    #       chaincodeID: basic
+    #       byteSize: 4000
+
+    # - label: journey-schedule-5-8000 bytesize
+    #   description: "Another additional test case for JourneySchedule function."
+    #   chaincodeID: basic
+    #   txDuration: 60
+    #   rateControl:
+    #     type: fixed-rate
+    #     opts:
+    #       tps: 2000
+    #   workload:
+    #     module: benchmarks/datamanagement/workloads/create-journey.js
+    #     arguments:
+    #       chaincodeID: basic
+    #       byteSize: 8000
+
+    # - label: journey-schedule-6-16000 bytesize
+    #   description: "Another additional test case for JourneySchedule function."
+    #   chaincodeID: basic
+    #   txDuration: 60
+    #   rateControl:
+    #     type: fixed-rate
+    #     opts:
+    #       tps: 2000
+    #   workload:
+    #     module: benchmarks/datamanagement/workloads/create-journey.js
+    #     arguments:
+    #       chaincodeID: basic
+    #       byteSize: 16000
+
+    # - label: journey-schedule-7-32000 bytesize
+    #   description: "Another additional test case for JourneySchedule function."
+    #   chaincodeID: basic
+    #   txDuration: 60
+    #   rateControl:
+    #     type: fixed-rate
+    #     opts:
+    #       tps: 2000
+    #   workload:
+    #     module: benchmarks/datamanagement/workloads/create-journey.js
+    #     arguments:
+    #       chaincodeID: basic
+    #       byteSize: 32000
+
+    # - label: journey-schedule-8-64000 bytesize
+    #   description: "Another additional test case for JourneySchedule function."
+    #   chaincodeID: basic
+    #   txDuration: 60
+    #   rateControl:
+    #     type: fixed-rate
+    #     opts:
+    #       tps: 2000
+    #   workload:
+    #     module: benchmarks/datamanagement/workloads/create-journey.js
+    #     arguments:
+    #       chaincodeID: basic
+    #       byteSize: 64000
+
+monitors:
+  resource:
+    - module: prometheus
+      options:
+        url: "http://localhost:9090"
+        metrics:
+          include: [dev-.*, couch, peer, orderer]
+          queries:
+            - name: Avg Memory (MB)
+              query: 'sum(container_memory_rss{name=~".+"}) by (name)'
+              step: 10
+              label: name
+              statistic: avg
+              multiplier: 0.000001
+            - name: CPU (%)
+              query: 'sum(rate(container_cpu_usage_seconds_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: avg
+              multiplier: 100
+            - name: Network In (MB)
+              query: 'sum(rate(container_network_receive_bytes_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: sum
+              multiplier: 0.000001
+            - name: Network Out (MB)
+              query: 'sum(rate(container_network_transmit_bytes_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: sum
+              multiplier: 0.000001
+            - name: Disc Write (MB)
+              query: 'sum(rate(container_fs_writes_bytes_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: sum
+              multiplier: 0.000001
+            - name: Disc Read (MB)
+              query: 'sum(rate(container_fs_reads_bytes_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: sum
+              multiplier: 0.000001
+

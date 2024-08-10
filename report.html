@@ -1,0 +1,451 @@
+<!doctype html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<script>
+    function plotChart(divId, chartData) {
+        // Convert from stringified html, to valid JSON
+        const chartDetails = JSON.parse(chartData.replace(/&quot;/g,'"'));
+        new Chart(document.getElementById(divId), {
+            type: chartDetails.type,
+            data: {
+                labels: chartDetails.labels,
+                datasets: chartDetails.datasets
+            },
+            options: {
+                legend: { display: chartDetails.legend },
+                title: {
+                    display: true,
+                    text: chartDetails.title
+                }
+            }
+        });
+    }
+</script>
+<html>
+<head>
+    <title>Hyperledger Caliper Report</title>
+    <meta charset="UTF-8"/>
+    <style type="text/css">
+        .left-column {
+            position: fixed;
+            width:20%;
+        }
+        .left-column ul {
+            display: block;
+            padding: 0;
+            list-style: none;
+            border-bottom: 1px solid #d9d9d9;
+            font-size: 14px;
+        }
+        .left-column h2{
+            font-size: 24px;
+            font-weight: 400;
+            margin-block-end: 0.5em;
+        }
+        .left-column h3{
+            font-size: 18px;
+            font-weight: 400;
+            margin-block-end: 0.5em;
+        }
+        .left-column li{
+            margin-left: 10px;
+            margin-bottom: 5px;
+            color: #5e6b73;
+        }
+        .right-column {
+            margin-left: 22%;
+            width:60%;
+        }
+        .right-column table {
+            font-size:11px;
+            color:#333333;
+            border-width: 1px;
+            border-color: #666666;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        .right-column h2{
+            font-weight: 400;
+        }
+        .right-column h3{
+            font-weight: 400;
+        }
+        .right-column h4 {
+            font-weight: 400;
+            margin-block-end: 0;
+        }
+        .right-column th {
+            border-width: 1px;
+            font-size: small;
+            padding: 8px;
+            border-style: solid;
+            border-color: #666666;
+            background-color: #f2f2f2;
+        }
+        .right-column td {
+            border-width: 1px;
+            font-size: small;
+            padding: 8px;
+            border-style: solid;
+            border-color: #666666;
+            background-color: #ffffff;
+            font-weight: 400;
+        }
+        .tag {
+            margin-bottom: 10px;
+            padding: 5px 10px;
+        }
+        pre {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            -khtml-border-radius: 5px;
+            overflow:auto;
+            max-height:300px;
+            font-size:12px;
+        }
+        .charting {
+            display:flex;
+            flex-direction:row;
+            flex-wrap: wrap;
+            page-break-inside: auto;
+        }
+        .chart {
+            display:flex;
+            flex:1;
+            max-width: 50%;
+        }
+    </style>
+</head>
+<body style="font-family: IBM Plex Sans; font-weight: 200;">
+    <main>
+        <div class="left-column">
+            <img src="https://hyperledger.github.io/caliper/assets/img/hyperledger_caliper_logo_color.png" style="width:95%;" alt="">
+            <ul>
+                <h3>&nbspBasic information</h3>
+                <li>DLT: &nbsp<span style="font-weight: 500;">fabric</span></li>
+                <li>Name: &nbsp<span style="font-weight: 500;">insert-data-hash-benchmark</span></li>
+                <li>Description: &nbsp<span style="font-weight: 500;">Benchmarking the Hyperledger Fabric network with the InsertTestDataHash function</span></li>
+                <li>Benchmark Rounds: &nbsp<span style="font-weight: 500;">2</span></li>
+                <li><a href="#benchmarkInfo">Details</a></li>
+            </ul>
+            <ul>
+                <h3>&nbspBenchmark results</h3>
+                <li><a href="#benchmarksummary">Summary</a></li>
+                    <li><a href="#insert-data-hash">insert-data-hash</a></li>
+                    <li><a href="#insert-data-hash-100">insert-data-hash-100</a></li>
+            </ul>
+            <ul>
+                <h3>&nbspSystem under test</h3>
+                <li><a href="#sutdetails">Details</a></li>
+            </ul>
+        </div>
+
+        <div class="right-column">
+            <h1 style="padding-top: 3em; font-weight: 500;">Caliper report</h1>
+            <div style="border-bottom: 1px solid #d9d9d9; margin-bottom: 10px;" id="benchmarksummary">
+                <table style="min-width: 100%;">
+                    <h3>Summary of performance metrics</h3>
+                    <tr>
+                         <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                    </tr>
+
+                    <tr>
+                         <td>insert-data-hash</td> <td>120</td> <td>1</td> <td>121.4</td> <td>34.07</td> <td>33.34</td> <td>33.61</td> <td>3.5</td>
+                    </tr>
+                    <tr>
+                         <td>insert-data-hash-100</td> <td>119</td> <td>1</td> <td>120.4</td> <td>34.18</td> <td>32.10</td> <td>32.53</td> <td>3.4</td>
+                    </tr>
+                </table>
+            </div>
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="insert-data-hash">
+                <h2>Benchmark round: insert-data-hash</h2>
+                <p>Benchmarking the InsertTestDataHash function with specific parameters.</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 1
+rateControl:
+  type: fixed-rate
+  opts:
+    tps: 120
+</pre>
+                        <h3>Performance metrics for insert-data-hash</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>insert-data-hash</td> <td>120</td> <td>1</td> <td>121.4</td> <td>34.07</td> <td>33.34</td> <td>33.61</td> <td>3.5</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for insert-data-hash</h3>
+                            <h4>Resource monitor: prometheus</h4>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                <table>
+                                    <tr>
+                                         <th>Metric</th> <th>Prometheus Query</th> <th>Name</th> <th>Value</th>
+                                    </tr>
+                                    <tr>
+                                         <td>Avg Memory (MB)</td> <td>sum(container_memory_rss{name&#x3D;~&quot;.+&quot;}) by (name)</td> <td>ca_orderer</td> <td>6.32</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>couchdb0</td> <td>240</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>couchdb1</td> <td>258</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>dev-peer0.org1.example.com-basic_1.0-06ae9571ee4eeadc6e98048d50ab0d2f300beed87dbecb5f570d58cf7a4fc8e8</td> <td>28.2</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>dev-peer0.org2.example.com-basic_1.0-06ae9571ee4eeadc6e98048d50ab0d2f300beed87dbecb5f570d58cf7a4fc8e8</td> <td>29.3</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>orderer.example.com</td> <td>41.9</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>peer0.org1.example.com</td> <td>93.3</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>peer0.org2.example.com</td> <td>94.4</td>
+                                    </tr>
+                                    <tr>
+                                         <td>CPU (%)</td> <td>sum(rate(container_cpu_usage_seconds_total{name&#x3D;~&quot;.+&quot;}[1m])) by (name)</td> <td>ca_orderer</td> <td>0.00113</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>couchdb0</td> <td>107</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>couchdb1</td> <td>108</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>dev-peer0.org1.example.com-basic_1.0-06ae9571ee4eeadc6e98048d50ab0d2f300beed87dbecb5f570d58cf7a4fc8e8</td> <td>0.252</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>dev-peer0.org2.example.com-basic_1.0-06ae9571ee4eeadc6e98048d50ab0d2f300beed87dbecb5f570d58cf7a4fc8e8</td> <td>0.345</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>orderer.example.com</td> <td>0.667</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>peer0.org1.example.com</td> <td>3.99</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>peer0.org2.example.com</td> <td>3.89</td>
+                                    </tr>
+                                    <tr>
+                                         <td>Disc Write (MB)</td> <td>sum(rate(container_fs_writes_bytes_total{name&#x3D;~&quot;.+&quot;}[1m])) by (name)</td> <td>ca_orderer</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>couchdb0</td> <td>0.0235</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>couchdb1</td> <td>0.0196</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>dev-peer0.org1.example.com-basic_1.0-06ae9571ee4eeadc6e98048d50ab0d2f300beed87dbecb5f570d58cf7a4fc8e8</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>orderer.example.com</td> <td>0.0257</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>peer0.org1.example.com</td> <td>0.0156</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>peer0.org2.example.com</td> <td>0.0156</td>
+                                    </tr>
+                                    <tr>
+                                         <td>Disc Read (MB)</td> <td>sum(rate(container_fs_reads_bytes_total{name&#x3D;~&quot;.+&quot;}[1m])) by (name)</td> <td>ca_orderer</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>couchdb0</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>couchdb1</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>dev-peer0.org1.example.com-basic_1.0-06ae9571ee4eeadc6e98048d50ab0d2f300beed87dbecb5f570d58cf7a4fc8e8</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>orderer.example.com</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>peer0.org1.example.com</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>peer0.org2.example.com</td> <td>0.00</td>
+                                    </tr>
+                                </table>
+                                </tr>
+                            </table>
+                            <div class="charting">
+                            </div>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="insert-data-hash-100">
+                <h2>Benchmark round: insert-data-hash-100</h2>
+                <p>Test InsertTestDataHash function with asset size 100 bytes</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 1
+rateControl:
+  type: fixed-rate
+  opts:
+    tps: 120
+</pre>
+                        <h3>Performance metrics for insert-data-hash-100</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>insert-data-hash-100</td> <td>119</td> <td>1</td> <td>120.4</td> <td>34.18</td> <td>32.10</td> <td>32.53</td> <td>3.4</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for insert-data-hash-100</h3>
+                            <h4>Resource monitor: prometheus</h4>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                <table>
+                                    <tr>
+                                         <th>Metric</th> <th>Prometheus Query</th> <th>Name</th> <th>Value</th>
+                                    </tr>
+                                    <tr>
+                                         <td>Avg Memory (MB)</td> <td>sum(container_memory_rss{name&#x3D;~&quot;.+&quot;}) by (name)</td> <td>ca_orderer</td> <td>6.32</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>couchdb0</td> <td>238</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>couchdb1</td> <td>264</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>dev-peer0.org1.example.com-basic_1.0-06ae9571ee4eeadc6e98048d50ab0d2f300beed87dbecb5f570d58cf7a4fc8e8</td> <td>31.4</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>dev-peer0.org2.example.com-basic_1.0-06ae9571ee4eeadc6e98048d50ab0d2f300beed87dbecb5f570d58cf7a4fc8e8</td> <td>33.6</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>orderer.example.com</td> <td>41.5</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>peer0.org1.example.com</td> <td>102</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>peer0.org2.example.com</td> <td>99.1</td>
+                                    </tr>
+                                    <tr>
+                                         <td>CPU (%)</td> <td>sum(rate(container_cpu_usage_seconds_total{name&#x3D;~&quot;.+&quot;}[1m])) by (name)</td> <td>ca_orderer</td> <td>0.00451</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>couchdb0</td> <td>261</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>couchdb1</td> <td>258</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>dev-peer0.org1.example.com-basic_1.0-06ae9571ee4eeadc6e98048d50ab0d2f300beed87dbecb5f570d58cf7a4fc8e8</td> <td>0.493</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>dev-peer0.org2.example.com-basic_1.0-06ae9571ee4eeadc6e98048d50ab0d2f300beed87dbecb5f570d58cf7a4fc8e8</td> <td>0.497</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>orderer.example.com</td> <td>0.798</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>peer0.org1.example.com</td> <td>4.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>peer0.org2.example.com</td> <td>3.88</td>
+                                    </tr>
+                                    <tr>
+                                         <td>Disc Write (MB)</td> <td>sum(rate(container_fs_writes_bytes_total{name&#x3D;~&quot;.+&quot;}[1m])) by (name)</td> <td>ca_orderer</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>couchdb0</td> <td>0.135</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>couchdb1</td> <td>0.122</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>dev-peer0.org1.example.com-basic_1.0-06ae9571ee4eeadc6e98048d50ab0d2f300beed87dbecb5f570d58cf7a4fc8e8</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>orderer.example.com</td> <td>0.152</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>peer0.org1.example.com</td> <td>0.0938</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>peer0.org2.example.com</td> <td>0.0938</td>
+                                    </tr>
+                                    <tr>
+                                         <td>Disc Read (MB)</td> <td>sum(rate(container_fs_reads_bytes_total{name&#x3D;~&quot;.+&quot;}[1m])) by (name)</td> <td>ca_orderer</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>couchdb0</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>couchdb1</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>dev-peer0.org1.example.com-basic_1.0-06ae9571ee4eeadc6e98048d50ab0d2f300beed87dbecb5f570d58cf7a4fc8e8</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>orderer.example.com</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>peer0.org1.example.com</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td></td> <td></td> <td>peer0.org2.example.com</td> <td>0.00</td>
+                                    </tr>
+                                </table>
+                                </tr>
+                            </table>
+                            <div class="charting">
+                            </div>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;">
+                <h2>Test Environment</h2>
+                <h3>benchmark config</h3>
+                <pre id="benchmarkInfo" style="overflow: visible;white-space: pre-wrap;max-height:100%;">name: insert-data-hash-benchmark
+description: &gt;-
+  Benchmarking the Hyperledger Fabric network with the InsertTestDataHash
+  function
+workers:
+  number: 1
+rounds:
+  - label: insert-data-hash
+    description: Benchmarking the InsertTestDataHash function with specific parameters.
+    chaincodeID: basic
+    txDuration: 1
+    rateControl:
+      type: fixed-rate
+      opts:
+        tps: 120
+    workload:
+      module: benchmarks&#x2F;datamanagement&#x2F;workloads&#x2F;insert-data-hash.js
+      arguments:
+        chaincodeID: basic
+  - label: insert-data-hash-100
+    description: Test InsertTestDataHash function with asset size 100 bytes
+    chaincodeID: basic
+    txDuration: 1
+    rateControl:
+      type: fixed-rate
+      opts:
+        tps: 120
+    workload:
+      module: benchmarks&#x2F;datamanagement&#x2F;workloads&#x2F;insert-data-hash.js
+      arguments:
+        chaincodeID: basic
+        byteSize: 100
+</pre>
+                <h3>SUT</h3>
+                <pre id="sutdetails">not provided</pre>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

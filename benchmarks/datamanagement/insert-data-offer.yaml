@@ -1,0 +1,165 @@
+test:
+  name: insert-data-offer-benchmark
+  description: "Benchmarking the Hyperledger Fabric network with the InsertDataOffer function"
+  workers:
+    number: 10
+  rounds:
+    - label: insert-data-offer
+      description: "Benchmarking the InsertDataOffer function with specific parameters."
+      chaincodeID: basic
+      txDuration: 60
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 60
+      workload:
+        module: benchmarks/datamanagement/workloads/insert-data-offer.js
+        arguments:
+          chaincodeID: basic
+
+    - label: insert-data-offer-100
+      description: "Test InsertDataOffer function with data hash size 100 bytes"
+      chaincodeID: basic
+      txDuration: 60
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 60
+      workload:
+        module: benchmarks/datamanagement/workloads/insert-data-offer.js
+        arguments:
+          chaincodeID: basic
+          byteSize: 100
+
+    - label: insert-data-offer-1000
+      description: "Test InsertDataOffer function with data hash size 1000 bytes"
+      chaincodeID: basic
+      txDuration: 60
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 60
+      workload:
+        module: benchmarks/datamanagement/workloads/insert-data-offer.js
+        arguments:
+          chaincodeID: basic
+          byteSize: 1000
+
+    - label: insert-data-offer-2000
+      description: "Test InsertDataOffer function with data hash size 2000 bytes"
+      chaincodeID: basic
+      txDuration: 60
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 60
+      workload:
+        module: benchmarks/datamanagement/workloads/insert-data-offer.js
+        arguments:
+          chaincodeID: basic
+          byteSize: 2000
+
+    # - label: insert-data-offer-8000
+    #   description: "Test InsertHistoricalDataHash function with data hash size 8000 bytes"
+    #   chaincodeID: basic
+    #   txDuration: 60
+    #   rateControl:
+    #     type: fixed-load
+    #     opts:
+    #       transactionLoad: 50
+    #       startingTps: 1
+    #   workload:
+    #     module: benchmarks/datamanagement/workloads/insert-data-offer.js
+    #     arguments:
+    #       chaincodeID: basic
+    #       byteSize: 8000
+
+    # - label: insert-data-offer-13000
+    #   description: "Test InsertHistoricalDataHash function with data hash size 13000 bytes"
+    #   chaincodeID: basic
+    #   txDuration: 60
+    #   rateControl:
+    #     type: fixed-load
+    #     opts:
+    #       transactionLoad: 70
+    #       startingTps: 1
+    #   workload:
+    #     module: benchmarks/datamanagement/workloads/insert-data-offer.js
+    #     arguments:
+    #       chaincodeID: basic
+    #       byteSize: 13000
+
+    # - label: insert-data-offer-32000
+    #   description: "Test InsertHistoricalDataHash function with data hash size 32000 bytes"
+    #   chaincodeID: basic
+    #   txDuration: 60
+    #   rateControl:
+    #     type: fixed-load
+    #     opts:
+    #       transactionLoad: 90
+    #       startingTps: 1
+    #   workload:
+    #     module: benchmarks/datamanagement/workloads/insert-data-offer.js
+    #     arguments:
+    #       chaincodeID: basic
+    #       byteSize: 32000
+
+    # - label: insert-data-offer-64000
+    #   description: "Test InsertHistoricalDataHash function with data hash size 64000 bytes"
+    #   chaincodeID: basic
+    #   txDuration: 60
+    #   rateControl:
+    #     type: fixed-load
+    #     opts:
+    #       transactionLoad: 100
+    #       startingTps: 1
+    #   workload:
+    #     module: benchmarks/datamanagement/workloads/insert-data-offer.js
+    #     arguments:
+    #       chaincodeID: basic
+    #       byteSize: 64000
+
+monitors:
+  resource:
+    - module: prometheus
+      options:
+        url: "http://localhost:9090"
+        metrics:
+          include: [dev-.*, couch, peer, orderer]
+          queries:
+            - name: Avg Memory (MB)
+              query: 'sum(container_memory_rss{name=~".+"}) by (name)'
+              step: 10
+              label: name
+              statistic: avg
+              multiplier: 0.000001
+            - name: CPU (%)
+              query: 'sum(rate(container_cpu_usage_seconds_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: avg
+              multiplier: 100
+            - name: Network In (MB)
+              query: 'sum(rate(container_network_receive_bytes_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: sum
+              multiplier: 0.000001
+            - name: Network Out (MB)
+              query: 'sum(rate(container_network_transmit_bytes_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: sum
+              multiplier: 0.000001
+            - name: Disc Write (MB)
+              query: 'sum(rate(container_fs_writes_bytes_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: sum
+              multiplier: 0.000001
+            - name: Disc Read (MB)
+              query: 'sum(rate(container_fs_reads_bytes_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: sum
+              multiplier: 0.000001

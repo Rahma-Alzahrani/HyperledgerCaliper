@@ -1,0 +1,184 @@
+test:
+  name: get-data-offers
+  description: >
+    This is a duration based benchmark targeting a Hyperledger Fabric network using the `basic` NodeJS chaincode contract that is interacted with via a Fabric-SDK-Node Gateway. Each test round invokes the 'GetAllOffer()' API method.
+  workers:
+    number: 200
+  rounds:
+    - label: get-data-offer-evaluate
+      description: >
+        Test an evaluateTransaction() Gateway method against the NodeJS `basic` Smart Contract method named `GetAlldata-offer`. This method retrieves all data-offer schedules from the ledger.
+      chaincodeID: basic
+      txDuration: 60
+      rateControl:
+        type: fixed-load
+        opts:
+          transactionLoad: 20
+      workload:
+        module: benchmarks/datamanagement/workloads/get-data-offer.js
+        arguments:
+          chaincodeID: basic
+    - label: get-data-offer-evaluate-100
+      description: >
+        Test an evaluateTransaction() Gateway method against the NodeJS `basic` Smart Contract method named `GetAlldata-offer`. This method retrieves all data-offer schedules from the ledger.
+      chaincodeID: basic
+      txDuration: 60
+      rateControl:
+        type: fixed-load
+        opts:
+          transactionLoad: 20
+      workload:
+        module: benchmarks/datamanagement/workloads/get-data-offer.js
+        arguments:
+          chaincodeID: basic
+          byteSize: 100
+          consensus: false  
+    - label: get-data-offer-evaluate-1000
+      description: >
+        Test an evaluateTransaction() Gateway method against the NodeJS `basic` Smart Contract method named `GetAlldata-offer`. This method retrieves all data-offer schedules from the ledger.
+      chaincodeID: basic
+      txDuration: 60
+      rateControl:
+        type: fixed-load
+        opts:
+          transactionLoad: 20
+      workload:
+        module: benchmarks/datamanagement/workloads/get-data-offer.js
+        arguments:
+          chaincodeID: basic
+          byteSize: 1000
+          consensus: false 
+    - label: get-data-offer-evaluate-2000
+      description: >
+        Test an evaluateTransaction() Gateway method against the NodeJS `basic` Smart Contract method named `GetAlldata-offer`. This method retrieves all data-offer schedules from the ledger.
+      chaincodeID: basic
+      txDuration: 60
+      rateControl:
+        type: fixed-load
+        opts:
+          transactionLoad: 20
+      workload:
+        module: benchmarks/datamanagement/workloads/get-data-offer.js
+        arguments:
+          chaincodeID: basic
+          byteSize: 2000
+          consensus: false     
+    - label: get-data-offer-evaluate-4000
+      description: >
+        Test an evaluateTransaction() Gateway method against the NodeJS `basic` Smart Contract method named `GetAlldata-offer`. This method retrieves all data-offer schedules from the ledger.
+      chaincodeID: basic
+      txDuration: 60
+      rateControl:
+        type: fixed-load
+        opts:
+          transactionLoad: 20
+      workload:
+        module: benchmarks/datamanagement/workloads/get-data-offer.js
+        arguments:
+          chaincodeID: basic
+          byteSize: 4000
+          consensus: false  
+    - label: get-data-offer-evaluate-8000
+      description: >
+        Test an evaluateTransaction() Gateway method against the NodeJS `basic` Smart Contract method named `GetAlldata-offer`. This method retrieves all data-offer schedules from the ledger.
+      chaincodeID: basic
+      txDuration: 60
+      rateControl:
+        type: fixed-load
+        opts:
+          transactionLoad: 20
+      workload:
+        module: benchmarks/datamanagement/workloads/get-data-offer.js
+        arguments:
+          chaincodeID: basic
+          byteSize: 8000
+          consensus: false 
+    - label: get-data-offer-evaluate-16000
+      description: >
+        Test an evaluateTransaction() Gateway method against the NodeJS `basic` Smart Contract method named `GetAlldata-offer`. This method retrieves all data-offer schedules from the ledger.
+      chaincodeID: basic
+      txDuration: 60
+      rateControl:
+        type: fixed-load
+        opts:
+          transactionLoad: 20
+      workload:
+        module: benchmarks/datamanagement/workloads/get-data-offer.js
+        arguments:
+          chaincodeID: basic
+          byteSize: 16000
+          consensus: false   
+    - label: get-data-offer-evaluate-32000
+      description: >
+        Test an evaluateTransaction() Gateway method against the NodeJS `basic` Smart Contract method named `GetAlldata-offer`. This method retrieves all data-offer schedules from the ledger.
+      chaincodeID: basic
+      txDuration: 60
+      rateControl:
+        type: fixed-load
+        opts:
+          transactionLoad: 20
+      workload:
+        module: benchmarks/datamanagement/workloads/get-data-offer.js
+        arguments:
+          chaincodeID: basic
+          byteSize: 23000
+          consensus: false  
+    - label: get-data-offer-evaluate-64000
+      description: >
+        Test an evaluateTransaction() Gateway method against the NodeJS `basic` Smart Contract method named `GetAlldata-offer`. This method retrieves all data-offer schedules from the ledger.
+      chaincodeID: basic
+      txDuration: 60
+      rateControl:
+        type: fixed-load
+        opts:
+          transactionLoad: 20
+      workload:
+        module: benchmarks/datamanagement/workloads/get-data-offer.js
+        arguments:
+          chaincodeID: basic
+          byteSize: 64000
+          consensus: false 
+monitors:
+  resource:
+    - module: prometheus
+      options:
+        url: "http://localhost:9090"
+        metrics:
+          include: [dev-.*, couch, peer, orderer]
+          queries:
+            - name: "Avg Memory (MB)"
+              query: 'sum(container_memory_rss{name=~".+"}) by (name)'
+              step: 10
+              label: name
+              statistic: avg
+              multiplier: 0.000001
+            - name: "CPU (%)"
+              query: 'sum(rate(container_cpu_usage_seconds_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: avg
+              multiplier: 100
+            - name: "Network In (MB)"
+              query: 'sum(rate(container_network_receive_bytes_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: sum
+              multiplier: 0.000001
+            - name: "Network Out (MB)"
+              query: 'sum(rate(container_network_transmit_bytes_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: sum
+              multiplier: 0.000001
+            - name: "Disc Write (MB)"
+              query: 'sum(rate(container_fs_writes_bytes_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: sum
+              multiplier: 0.000001
+            - name: "Disc Read (MB)"
+              query: 'sum(rate(container_fs_reads_bytes_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: sum
+              multiplier: 0.000001

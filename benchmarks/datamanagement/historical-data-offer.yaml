@@ -1,0 +1,174 @@
+test:
+  name: insert-historical-data-offer-benchmark
+  description: "Benchmarking the Hyperledger Fabric network with the InsertTestHistoricalDataOffer function"
+  workers:
+    number: 10
+  rounds:
+    - label: insert-historical-data-offer-100
+      description: "Benchmarking the InsertTestHistoricalDataOffer function with a data size of 100 bytes at a fixed rate."
+      chaincodeID: basic
+      txDuration: 60
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 60
+      workload:
+        module: benchmarks/datamanagement/workloads/historical-data-offer.js
+        arguments:
+          chaincodeID: basic
+          byteSize: 100
+    - label: insert-historical-data-offer-1000
+      description: "Benchmarking the InsertTestHistoricalDataOffer function with a data size of 1000 bytes at a fixed rate."
+      chaincodeID: basic
+      txDuration: 60
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 60
+      workload:
+        module: benchmarks/datamanagement/workloads/historical-data-offer.js
+        arguments:
+          chaincodeID: basic
+          byteSize: 1000
+
+    - label: insert-historical-data-offer-2000-fixed-load
+      description: "Benchmarking the InsertTestHistoricalDataOffer function with a data size of 2000 bytes at a fixed rate."
+      chaincodeID: basic
+      txDuration: 60
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 60
+      workload:
+        module: benchmarks/datamanagement/workloads/historical-data-offer.js
+        arguments:
+          chaincodeID: basic
+          byteSize: 2000
+    # - label: insert-historical-data-offer-3000-fixed-load
+    #   description: "Benchmarking the InsertTestHistoricalDataOffer function with a data size of 3000 bytes at a fixed load."
+    #   chaincodeID: basic
+    #   txDuration: 60
+    #   rateControl:
+    #     type: fixed-load
+    #     opts:
+    #       transactionLoad: 40
+    #       startingTps: 1
+    #   workload:
+    #     module: benchmarks/datamanagement/workloads/historical-data-offer.js
+    #     arguments:
+    #       chaincodeID: basic
+    #       byteSize: 3000
+    # - label: insert-historical-data-offer-4000-fixed-load
+    #   description: "Benchmarking the InsertTestHistoricalDataOffer function with a data size of 4000 bytes at a fixed load."
+    #   chaincodeID: basic
+    #   txDuration: 60
+    #   rateControl:
+    #     type: fixed-load
+    #     opts:
+    #       transactionLoad: 60
+    #       startingTps: 1
+    #   workload:
+    #     module: benchmarks/datamanagement/workloads/historical-data-offer.js
+    #     arguments:
+    #       chaincodeID: basic
+    #       byteSize: 4000
+    # - label: insert-historical-data-offer-8000-fixed-load
+    #   description: "Benchmarking the InsertTestHistoricalDataOffer function with a data size of 8000 bytes at a fixed load."
+    #   chaincodeID: basic
+    #   txDuration: 60
+    #   rateControl:
+    #     type: fixed-load
+    #     opts:
+    #       transactionLoad: 80
+    #       startingTps: 1
+    #   workload:
+    #     module: benchmarks/datamanagement/workloads/historical-data-offer.js
+    #     arguments:
+    #       chaincodeID: basic
+    #       byteSize: 8000
+    # - label: insert-historical-data-offer-16000-fixed-load
+    #   description: "Benchmarking the InsertTestHistoricalDataOffer function with a data size of 16000 bytes at a fixed load."
+    #   chaincodeID: basic
+    #   txDuration: 60
+    #   rateControl:
+    #     type: fixed-load
+    #     opts:
+    #       transactionLoad: 100
+    #       startingTps: 1
+    #   workload:
+    #     module: benchmarks/datamanagement/workloads/historical-data-offer.js
+    #     arguments:
+    #       chaincodeID: basic
+    #       byteSize: 16000
+    # - label: insert-historical-data-offer-32000-fixed-load
+    #   description: "Benchmarking the InsertTestHistoricalDataOffer function with a data size of 32000 bytes at a fixed load."
+    #   chaincodeID: basic
+    #   txDuration: 60
+    #   rateControl:
+    #     type: fixed-load
+    #     opts:
+    #       transactionLoad: 120
+    #       startingTps: 1
+    #   workload:
+    #     module: benchmarks/datamanagement/workloads/historical-data-offer.js
+    #     arguments:
+    #       chaincodeID: basic
+    #       byteSize: 32000
+    # - label: insert-historical-data-offer-64000-fixed-load
+    #   description: "Benchmarking the InsertTestHistoricalDataOffer function with a data size of 64000 bytes at a fixed load."
+    #   chaincodeID: basic
+    #   txDuration: 60
+    #   rateControl:
+    #     type: fixed-load
+    #     opts:
+    #       transactionLoad: 150
+    #       startingTps: 1
+    #   workload:
+    #     module: benchmarks/datamanagement/workloads/historical-data-offer.js
+    #     arguments:
+    #       chaincodeID: basic
+    #       byteSize: 64000
+monitors:
+  resource:
+    - module: prometheus
+      options:
+        url: "http://localhost:9090"
+        metrics:
+          include: [dev-.*, couch, peer, orderer]
+          queries:
+            - name: Avg Memory (MB)
+              query: 'sum(container_memory_rss{name=~".+"}) by (name)'
+              step: 10
+              label: name
+              statistic: avg
+              multiplier: 0.000001
+            - name: CPU (%)
+              query: 'sum(rate(container_cpu_usage_seconds_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: avg
+              multiplier: 100
+            - name: Network In (MB)
+              query: 'sum(rate(container_network_receive_bytes_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: sum
+              multiplier: 0.000001
+            - name: Network Out (MB)
+              query: 'sum(rate(container_network_transmit_bytes_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: sum
+              multiplier: 0.000001
+            - name: Disc Write (MB)
+              query: 'sum(rate(container_fs_writes_bytes_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: sum
+              multiplier: 0.000001
+            - name: Disc Read (MB)
+              query: 'sum(rate(container_fs_reads_bytes_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: sum
+              multiplier: 0.000001

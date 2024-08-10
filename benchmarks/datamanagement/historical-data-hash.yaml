@@ -1,0 +1,165 @@
+test:
+  name: insert-historical-data-hash-benchmark
+  description: "Benchmarking the Hyperledger Fabric network with the InsertHistoricalDataHash function"
+  workers:
+    number: 1
+  rounds:
+    # - label: insert-historical-data-offer-hash
+    #   description: "Benchmarking the InsertHistoricalDataHash function with specific parameters."
+    #   chaincodeID: basic
+    #   txDuration: 1
+    #   rateControl:
+    #     type: fixed-rate
+    #     opts:
+    #       tps: 100
+    #   workload:
+    #     module: benchmarks/datamanagement/workloads/historical-insert-data-hash.js
+    #     arguments:
+    #       chaincodeID: basic
+
+    - label: insert-historical-data-hash-100
+      description: "Test InsertHistoricalDataHash function with data hash size 100 bytes"
+      chaincodeID: basic
+      txDuration: 1
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 100
+      workload:
+        module: benchmarks/datamanagement/workloads/historical-insert-data-hash.js
+        arguments:
+          chaincodeID: basic
+          byteSize: 100
+
+    - label: insert-historical-data-hash-1000
+      description: "Test InsertHistoricalDataHash function with data hash size 1000 bytes"
+      chaincodeID: basic
+      txDuration: 1
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 100
+      workload:
+        module: benchmarks/datamanagement/workloads/historical-insert-data-hash.js
+        arguments:
+          chaincodeID: basic
+          byteSize: 1000
+
+    - label: insert-historical-data-hash-2000
+      description: "Test InsertHistoricalDataHash function with data hash size 2000 bytes"
+      chaincodeID: basic
+      txDuration: 1
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 100
+          startingTps: 1
+      workload:
+        module: benchmarks/datamanagement/workloads/historical-insert-data-hash.js
+        arguments:
+          chaincodeID: basic
+          byteSize: 2000
+
+    # - label: insert-historical-data-hash-8000
+    #   description: "Test InsertHistoricalDataHash function with data hash size 8000 bytes"
+    #   chaincodeID: basic
+    #   txDuration: 60
+    #   rateControl:
+    #     type: fixed-load
+    #     opts:
+    #       transactionLoad: 60
+    #       startingTps: 1
+    #   workload:
+    #     module: benchmarks/datamanagement/workloads/historical-insert-data-hash.js
+    #     arguments:
+    #       chaincodeID: basic
+    #       byteSize: 8000
+
+    # - label: insert-historical-data-hash-16000
+    #   description: "Test InsertHistoricalDataHash function with data hash size 16000 bytes"
+    #   chaincodeID: basic
+    #   txDuration: 60
+    #   rateControl:
+    #     type: fixed-load
+    #     opts:
+    #       transactionLoad: 80
+    #       startingTps: 1
+    #   workload:
+    #     module: benchmarks/datamanagement/workloads/historical-insert-data-hash.js
+    #     arguments:
+    #       chaincodeID: basic
+    #       byteSize: 16000
+
+    # - label: insert-historical-data-hash-32000
+    #   description: "Test InsertHistoricalDataHash function with data hash size 32000 bytes"
+    #   chaincodeID: basic
+    #   txDuration: 60
+    #   rateControl:
+    #     type: fixed-load
+    #     opts:
+    #       transactionLoad: 100
+    #       startingTps: 1
+    #   workload:
+    #     module: benchmarks/datamanagement/workloads/historical-insert-data-hash.js
+    #     arguments:
+    #       chaincodeID: basic
+    #       byteSize: 32000
+
+    # - label: insert-historical-data-hash-64000
+    #   description: "Test InsertHistoricalDataHash function with data hash size 64000 bytes"
+    #   chaincodeID: basic
+    #   txDuration: 60
+    #   rateControl:
+    #     type: fixed-load
+    #     opts:
+    #       transactionLoad: 100
+    #       startingTps: 1
+    #   workload:
+    #     module: benchmarks/datamanagement/workloads/historical-insert-data-hash.js
+    #     arguments:
+    #       chaincodeID: basic
+    #       byteSize: 64000
+monitors:
+  resource:
+    - module: prometheus
+      options:
+        url: "http://localhost:9090"
+        metrics:
+          include: [dev-.*, couch, peer, orderer]
+          queries:
+            - name: Avg Memory (MB)
+              query: 'sum(container_memory_rss{name=~".+"}) by (name)'
+              step: 10
+              label: name
+              statistic: avg
+              multiplier: 0.000001
+            - name: CPU (%)
+              query: 'sum(rate(container_cpu_usage_seconds_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: avg
+              multiplier: 100
+            - name: Network In (MB)
+              query: 'sum(rate(container_network_receive_bytes_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: sum
+              multiplier: 0.000001
+            - name: Network Out (MB)
+              query: 'sum(rate(container_network_transmit_bytes_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: sum
+              multiplier: 0.000001
+            - name: Disc Write (MB)
+              query: 'sum(rate(container_fs_writes_bytes_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: sum
+              multiplier: 0.000001
+            - name: Disc Read (MB)
+              query: 'sum(rate(container_fs_reads_bytes_total{name=~".+"}[1m])) by (name)'
+              step: 10
+              label: name
+              statistic: sum
+              multiplier: 0.000001
